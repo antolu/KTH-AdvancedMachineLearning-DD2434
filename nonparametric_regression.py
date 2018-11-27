@@ -8,7 +8,7 @@ import random
 sigma = 1.0
 tau = 0.5
 l_list = list((0.1, 0.5, 1, 5))
-l = 0.5
+l = 1
 beta = 3.5
 
 def computeGaussian(X, mu, sigma) :
@@ -120,7 +120,7 @@ nonlinear_targets = g(X)
 # Sample from posterior
 ###########################
 
-x_test = np.linspace(-10, 10, 100)
+x_test = np.linspace(-15, 15, 501)
 
 gram = compute_gram_matrix(X, sigma, l)
 
