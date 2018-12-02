@@ -5,7 +5,7 @@ from scipy.spatial.distance import cdist
 import scipy
 import random
 
-sigma = 0.3
+sigma = 1.0
 tau = 0.5
 
 def computeGaussian(X, mu, sigma) :
@@ -39,28 +39,38 @@ pb.pcolormesh(W0, W1, prior)
 ax1 = pb.axes()
 ax1.set_aspect('equal', 'datalim')
 ax1.margins(0.1)
-pb.show()
+# pb.show()
+pb.savefig("prior.eps")
+pb.clf()
 
 ##################
 # Posterior
 ##################
 
-for i in range(0, 6) :
-    ## Sample point from generated data
-    randIdx = random.randrange(0, Ntargets)
-    randx = xData[randIdx]
-    target = targetsWithNoise[randIdx]
+## Sample random points
+N = 6
+xPoints = np.zeros((N, 1))
+yPoints = np.zeros((N, 1))
 
-    xPosterior = np.array([[randx], [1]])
+randIdx = (-105, -30, 170, 50, 80, 10)
+i = 0
+
+for idx in randIdx :
+    randx = xData[idx]
+    target = targetsWithNoise[idx]
+
+    xPoints[i, 0] = randx
+    yPoints[i, 0] = target
+
+    i += 1
+
+# Compute posterior
+for i in range(0, N) :
+    xPosterior = np.array([[xPoints[i, 0]], [1]])
     xDot = xPosterior @ np.transpose(xPosterior)
-    # print("random point")
-    # print(xPosterior)
-    # print(xDot)
 
     covPosterior = np.linalg.inv(np.linalg.inv(covPrior) + (1/sigma) * (xDot))
-    muPosterior = covPosterior @ (np.linalg.inv(covPrior) @ muPrior + (1/sigma) * xPosterior * target) 
-    
-    # + (1/sigma) * target * np.linalg.inv( + (1/sigma) * (xDot)) @ xPosterior
+    muPosterior = covPosterior @ (np.linalg.inv(covPrior) @ muPrior + (1/sigma) * xPosterior * yPoints[i, 0]) 
 
     x = y = np.linspace(-3, 3, num=Ngrid)
     X, Y = np.meshgrid(x, y)
@@ -72,17 +82,23 @@ for i in range(0, 6) :
     ax2 = pb.axes()
     ax2.set_aspect('equal', 'datalim')
     ax2.margins(0.1)
-    pb.show()
+    pb.savefig("posterior_iteration_" + str(i) + ".eps")
+    # pb.show()
+    pb.clf()
 
     ## Draw samples from the posterior
 
-    for i in range(0, 6) :
+    for j in range(0, 6) :
         w = np.random.multivariate_normal(np.ravel(muPosterior), covPosterior)
         y = f(w, xData)
         pb.plot(xData, y)
 
-    pb.plot(xData, targetsWithNoise, "+")
-    pb.show()
+    pb.plot(xData, targetsWithNoise, "+", label="dataset")
+    pb.plot(xPoints[0:i+1, 0], yPoints[0:i+1, 0], "bs", label="training data")
+    pb.legend()
+    pb.savefig("samples_iteration_" + str(i) + ".eps")
+    # pb.show()
+    pb.clf()
 
     covPrior = covPosterior
     muPrior = muPosterior
