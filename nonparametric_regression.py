@@ -8,7 +8,7 @@ import random
 sigma = 1.0
 tau = 0.5
 l_list = list((0.1, 0.5, 1, 5))
-l = 1
+l = 0.5
 beta = 3.5
 
 def computeGaussian(X, mu, sigma) :
@@ -103,11 +103,12 @@ for L in l_list :
     for i in range(0, 10) :
         randoms = np.random.multivariate_normal(muPrior, covPrior)
         
-    #     pb.plot(xData, randoms)
-    #     pb.title("l = " + str(l))
-
+        pb.plot(xData, randoms)
+        
+    pb.title("Prior, l = " + str(L))
+    pb.savefig("l=" + str(L) + ".eps")
     # pb.show()
-    # pb.savefig("l=" + str(l) + ".eps")
+    pb.clf()
 
 #############################################
 # Generate some more non-linear data
@@ -120,6 +121,11 @@ nonlinear_targets = g(X)
 # Sample from posterior
 ###########################
 
+# Plot line of g(x) for reference 
+x = np.linspace(-7, 7, 1000)
+y = h(x)
+pb.plot(x, y, label="Original function", color="silver")
+
 x_test = np.linspace(-15, 15, 501)
 
 gram = compute_gram_matrix(X, sigma, l)
@@ -127,7 +133,7 @@ gram = compute_gram_matrix(X, sigma, l)
 mean, variance = get_posterior_params(gram, X, x_test, nonlinear_targets.reshape(-1, 1))
 f = np.random.multivariate_normal(np.ravel(mean), variance)
 
-pb.plot(x_test, f, label="Test data")
+pb.plot(x_test, f, label="Regressed curve")
 
 # Plot training points
 pb.plot(X, nonlinear_targets, "s", label="Training data")
@@ -138,12 +144,8 @@ pb.plot()
 # Plot variance
 pb.gca().fill_between(x_test.flat, np.ravel(mean) - 2 * np.diag(variance), np.ravel(mean) + 2 * np.diag(variance), color="#dddddd")
 
-## Plot line of g(x) for reference 
-# x = np.linspace(-10, 10, 1000)
-# y = h(x)
-# pb.plot(x, y)
-
 pb.legend()
+pb.savefig("posterior_nonparametric.eps")
 pb.show()
 
 ########################
@@ -156,5 +158,6 @@ for i in range(0, 5) :
 
 pb.plot(X, nonlinear_targets, "s", label="Training data")
 pb.title("Priors")
+pb.savefig("priors_nonparametric.eps")
 pb.legend()
-pb.show()
+# pb.show()
