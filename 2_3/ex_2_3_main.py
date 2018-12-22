@@ -59,7 +59,8 @@ with open(my_data_path + 'tree_samples.pickle', 'rb') as handle:
 """
     Construct a tree with parameters from the loaded parameter dict.
 """
-params_name = list(params.keys())[0]     
+params_list = list(params.keys())
+params_name = params_list[0]     
 params = params[params_name]
 root = load_params(params)
 
@@ -120,8 +121,6 @@ print()
 #
 ####################################################################################################
 
-s_dict = {}
-
 def rec(node, i, s_dict) :
     decendants = node.descendants
     distr = node.cat
@@ -135,28 +134,44 @@ def rec(node, i, s_dict) :
             return 0
 
     s = 1
-    # if node in s_dict :
-    #     s = s_dict[node]
-    # else :
-    for dec in decendants :
+    if node in s_dict :
+        s = s_dict[node]
+    else :
+        for dec in decendants :
 
-        ssum = 0
+            ssum = 0
 
-        for j in range(0, 3) :
-            ssum += dec.cat[i][j] * rec(dec, j, s_dict)
-        
-        s *= ssum
+            for j in range(0, len(dec.cat[i])) :
+                ssum += dec.cat[i][j] * rec(dec, j, s_dict)
+            
+            s *= ssum
 
-    s_dict[node] = s
+        s_dict[node] = s
 
     return s
 
-root_decendants = root.descendants
-root_distr = root.cat
+for k in range(0, len(params_list)) : 
 
-ssum = 0
-for i in range(0, 3) :
-    ssum += root_distr[0][i] * rec(root, i, s_dict)
+    # Build tree
+    params_name = params_list[k]     
+    parameters = params[params_name]
+    root = load_params(parameters)
 
-val = ssum
-print("Value: " + str(val))
+    # Load samples onto tree
+    samples_name = params_name + '_sample_1'
+    sample = samples[samples_name]
+    load_sample(root, sample)
+
+    s_dict = {}
+
+    root_decendants = root.descendants
+    root_distr = root.cat
+
+    # Calculate p(beta|X)
+    ssum = 0.0
+    for i in range(0, len(root_distr[0])) :
+        ssum += root_distr[0][i] * rec(root, i, s_dict)
+
+    # Print it
+    val = ssum
+    print("p(beta|X) iter " + str(k + 1) + ": " + str(val))
