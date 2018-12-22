@@ -77,12 +77,12 @@ load_sample(root, sample)
 """
 Print the tree (not very sophisticated). Structure: nodename_parentname
 """
-print_tree(root)
+# print_tree(root)
 
 """
 Print the tree with sample (not very sophisticated). Structure: nodename_parentname:sample
 """
-print_tree(root, print_sample = True)
+# print_tree(root, print_sample = True)
 
 """
 Use tree object:
@@ -114,8 +114,11 @@ t.create_random_tree(3)
 
 print()
 
+####################################################################################################
+#
 # Own code 
-rt = t.root
+#
+####################################################################################################
 
 s_dict = {}
 
@@ -132,18 +135,19 @@ def rec(node, i, s_dict) :
             return 0
 
     s = 1
-
+    # if node in s_dict :
+    #     s = s_dict[node]
+    # else :
     for dec in decendants :
 
         ssum = 0
-        # if dec in s_dict :
-        #     ssum = s_dict[dec]
-        # else :
+
         for j in range(0, 3) :
             ssum += dec.cat[i][j] * rec(dec, j, s_dict)
-            # s_dict[dec] = ssum
         
         s *= ssum
+
+    s_dict[node] = s
 
     return s
 
