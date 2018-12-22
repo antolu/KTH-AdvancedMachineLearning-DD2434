@@ -134,8 +134,8 @@ def rec(node, i, s_dict) :
             return 0
 
     s = 1
-    if node in s_dict :
-        s = s_dict[node]
+    if node in s_dict[i] :
+        s = s_dict[i][node]
     else :
         for dec in decendants :
 
@@ -146,7 +146,7 @@ def rec(node, i, s_dict) :
             
             s *= ssum
 
-        s_dict[node] = s
+        s_dict[i][node] = s
 
     return s
 
@@ -162,7 +162,7 @@ for k in range(0, len(params_list)) :
     sample = samples[samples_name]
     load_sample(root, sample)
 
-    s_dict = {}
+    s_dict = {0:{}, 1:{}, 2:{}, 3:{}, 4:{}}
 
     root_decendants = root.descendants
     root_distr = root.cat
