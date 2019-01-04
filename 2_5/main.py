@@ -188,18 +188,34 @@ def normalize_posterior(node, p_dict) :
     for dec in decendants :
         normalize_posterior(dec, p_dict)
 
-def assemble_posterior(node, i, p_dict) :
-    decendants = node.descendants
+# def assemble_posterior(node, i, p_dict) :
+#     decendants = node.descendants
+#     distr = node.cat
+
+#     if decendants == [] :
+#         return 1
+
+#     p = p_dict[i][node]
+#     for dec in decendants :
+#         p *= assemble_posterior(dec, i, p_dict)
+
+#     return p
+
+def sample(node, p_dict, samples) :
+    descendants = node.descendants
     distr = node.cat
 
-    if decendants == [] :
-        return 1
+    if descendants == [] :
+        return
 
-    p = p_dict[i][node]
-    for dec in decendants :
-        p *= assemble_posterior(dec, i, p_dict)
+    p_cat = list()
+    for i in range(0,len(distr[0])) : 
+        p_cat.append(p_dict[i][node])
 
-    return p
+    samples[node] = np.random.multinomial(10, p_cat)
+
+    for dec in descendants : 
+        sample(dec, p_dict, samples)
 
 # only one tree provided
 # root, params, sample already loaded
@@ -252,19 +268,26 @@ for dec in root.descendants :
     for j in range(0, 2) :
         print(p_dict[j][dec])
 
+samples = {}
+
+sample(root, p_dict, samples)
+
+for key in samples.keys() :
+    print("Sample: " + str(samples[key]))
+
 # Assemble the product posterior
-p1 = assemble_posterior(root, 0, p_dict)
-p2 = assemble_posterior(root, 1, p_dict)
+# p1 = assemble_posterior(root, 0, p_dict)
+# p2 = assemble_posterior(root, 1, p_dict)
 
-print("p1, p2")
-print(p1)
-print(p2)
+# print("p1, p2")
+# print(p1)
+# print(p2)
 
-denom = p1 + p2
-p1 = p1/denom
-p2 = p2/denom
-print(p1)
-print(p2)
+# denom = p1 + p2
+# p1 = p1/denom
+# p2 = p2/denom
+# print(p1)
+# print(p2)
 
-sample = np.random.multinomial(100, [p1, p2])
-print(sample)
+# sample = np.random.multinomial(100, [p1, p2])
+# print(sample)
