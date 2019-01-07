@@ -3,9 +3,9 @@ import math as m
 import scipy.stats
 
 def normal_distr(mu, sigma, x) :
-    return 1/(m.sqrt(2*m.pi*sigma)) * m.exp(((x - mu)**2)/(2*sigma))
+    return 1./(m.sqrt(2*m.pi*sigma)) * m.exp(-((x - mu)**2)/(2*sigma))
 
-Atr = np.array([[1/4, 3/4], [3/4, 1/4]])
+Atr = np.array([[1./4, 3./4], [3./4, 1./4]])
 
 def get_transition(state1, m1, state2):
     # calculate A((r1, m1), (r2, m1+1)) (for test purpose we set below)
@@ -20,7 +20,7 @@ def get_emission(state, m, emission, mus, beta, players):
 
 def get_init():
     # provide an array containing the initial state probability having size R (for test purpose we set below)
-    pi = np.array([0.2, 0.8])
+    pi = np.array([0.75, 0.25])
     # number of rows
     R = pi.shape[0]
     return pi, R
