@@ -79,34 +79,6 @@ Print the tree with sample (not very sophisticated). Structure: nodename_parentn
 """
 print_tree(root, print_sample = True)
 
-# """
-# Use tree object:
-# """
-
-# print("\nTree")
-
-# t = Tree()    
-    
-
-# my_data_path = ''
-
-# with open(my_data_path + 'tree_params.pickle', 'rb') as handle:
-#     params = pickle.load(handle, encoding='latin1')
-
-# key = list(params.keys())[0]    
-    
-# """
-# Load params into tree
-# """
-# t.load_params(params[key])
-# # t.print_tree()        
-
-# """
-# Generate a random tree
-# """
-# t.create_random_tree(3)
-# # t.print_tree() 
-
 print()
 
 ####################################################################################################
@@ -188,19 +160,6 @@ def normalize_posterior(node, p_dict) :
     for dec in decendants :
         normalize_posterior(dec, p_dict)
 
-# def assemble_posterior(node, i, p_dict) :
-#     decendants = node.descendants
-#     distr = node.cat
-
-#     if decendants == [] :
-#         return 1
-
-#     p = p_dict[i][node]
-#     for dec in decendants :
-#         p *= assemble_posterior(dec, i, p_dict)
-
-#     return p
-
 def sample(node, p_dict, samples) :
     descendants = node.descendants
     distr = node.cat
@@ -212,7 +171,7 @@ def sample(node, p_dict, samples) :
     for i in range(0,len(distr[0])) : 
         p_cat.append(p_dict[i][node])
 
-    samples[node] = np.random.multinomial(10, p_cat)
+    node.sample = np.random.multinomial(1, p_cat)[0]
 
     for dec in descendants : 
         sample(dec, p_dict, samples)
@@ -272,22 +231,4 @@ samples = {}
 
 sample(root, p_dict, samples)
 
-for key in samples.keys() :
-    print("Sample: " + str(samples[key]))
-
-# Assemble the product posterior
-# p1 = assemble_posterior(root, 0, p_dict)
-# p2 = assemble_posterior(root, 1, p_dict)
-
-# print("p1, p2")
-# print(p1)
-# print(p2)
-
-# denom = p1 + p2
-# p1 = p1/denom
-# p2 = p2/denom
-# print(p1)
-# print(p2)
-
-# sample = np.random.multinomial(100, [p1, p2])
-# print(sample)
+print_tree(root, print_sample = True)

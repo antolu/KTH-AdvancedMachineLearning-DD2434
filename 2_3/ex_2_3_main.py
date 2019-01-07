@@ -147,7 +147,7 @@ def rec(node, i, s_dict) :
             s *= ssum
 
         s_dict[i][node] = s
-
+    # print(str(node.name) + " " + str(i) + " " + str(s))
     return s
 
 for k in range(0, len(params_list)) : 
@@ -170,7 +170,9 @@ for k in range(0, len(params_list)) :
     # Calculate p(beta|X)
     ssum = 0.0
     for i in range(0, len(root_distr[0])) :
-        ssum += root_distr[0][i] * rec(root, i, s_dict)
+        s = root_distr[0][i] * rec(root, i, s_dict)
+        print(s)
+        ssum += s
 
     # Print it
     val = ssum
